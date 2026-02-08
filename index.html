@@ -9,7 +9,7 @@
         :root {
             --primary: #4f46e5;
             --primary-light: #e0e7ff;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-sub: #64748b;
@@ -69,7 +69,7 @@
 
         .search-box input {
             width: 100%;
-            padding: 10px 15px 10px 40px;
+            padding: 12px 15px 12px 40px;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-size: 0.95rem;
@@ -91,15 +91,16 @@
         }
 
         .settings select {
-            padding: 8px 30px 8px 12px;
+            padding: 10px 35px 10px 15px;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
-            background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 0.5rem center/1.5em 1.5em;
+            background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 0.7rem center/1.2em 1.2em;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
         }
 
-        /* --- Journal Section --- */
+        /* --- Journal Section & Header --- */
         .journal-section {
             margin-bottom: 40px;
             animation: fadeIn 0.5s ease-out;
@@ -108,26 +109,55 @@
         .journal-header {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-            padding-left: 5px;
-            border-left: 4px solid var(--primary);
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         }
 
-        .journal-header h2 {
+        .journal-cover {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-right: 20px;
+            background-color: #f1f5f9;
+        }
+
+        .journal-info h2 {
             font-size: 1.5rem;
             color: var(--text-main);
-            margin-left: 10px;
+            margin: 0 0 5px 0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .badge {
             background: var(--primary-light);
             color: var(--primary);
-            padding: 2px 8px;
-            border-radius: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
-            margin-left: 10px;
+            vertical-align: middle;
         }
+
+        .journal-link {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+        .journal-link:hover { color: var(--primary); }
 
         /* --- Card Styles --- */
         .card {
@@ -142,19 +172,20 @@
         .card:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e1;
         }
 
         .card-main {
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
         }
 
         @media(min-width: 768px) {
             .card-main {
                 flex-direction: row;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: space-between;
             }
         }
@@ -162,29 +193,32 @@
         .card-info { flex: 1; }
 
         .card-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 5px;
-            line-height: 1.4;
+            margin-bottom: 8px;
+            line-height: 1.5;
         }
 
-        /* 标题翻译样式 */
         .card-trans {
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: var(--primary);
-            margin-bottom: 8px;
-            font-style: italic;
-            display: none;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: none; /* Hidden by default */
+            padding: 8px 12px;
+            background: #eff6ff;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
         }
 
         .deadline-badge {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             background: var(--danger-bg);
             color: var(--danger);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
@@ -194,31 +228,31 @@
         .card-actions {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            flex-shrink: 0;
         }
         
-        @media(min-width: 768px) { .card-actions { margin-top: 0; } }
-
         .btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             border-radius: 8px;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            gap: 6px;
             border: none;
+            white-space: nowrap;
         }
 
         .btn-toggle { background: #f1f5f9; color: #475569; }
-        .btn-toggle:hover { background: #e2e8f0; }
+        .btn-toggle:hover { background: #e2e8f0; color: #1e293b; }
         .btn-toggle.active { background: #e2e8f0; color: var(--primary); }
 
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #4338ca; }
+        .btn-primary:hover { background: #4338ca; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
 
         /* --- Expandable Details --- */
         .card-details {
@@ -226,60 +260,65 @@
             border-top: 1px solid #e2e8f0;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
         }
 
         .card-details.open {
-            max-height: 2000px; /* 足够大以容纳内容 */
-            transition: max-height 0.6s ease-in-out;
+            max-height: 3000px; /* Allow enough height */
+            transition: max-height 0.8s ease-in-out;
         }
 
         .details-content {
-            padding: 20px;
+            padding: 25px;
             font-size: 0.95rem;
             color: var(--text-sub);
         }
 
-        .detail-item { margin-bottom: 20px; }
+        .detail-item { margin-bottom: 25px; }
         .detail-item:last-child { margin-bottom: 0; }
 
         .detail-label {
-            font-weight: 600;
+            font-weight: 700;
             color: #334155;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
         }
 
-        /* 详情内容的排版修正 */
-        .description-body ul { margin-left: 20px; margin-bottom: 10px; }
-        .description-body p { margin-bottom: 10px; }
-        .description-body a { color: var(--primary); text-decoration: none; }
-        .description-body a:hover { text-decoration: underline; }
+        /* Description Content Styling */
+        .description-body {
+            line-height: 1.7;
+            color: #475569;
+        }
+        .description-body p { margin-bottom: 12px; }
+        .description-body ul { margin-left: 20px; margin-bottom: 12px; }
+        .description-body li { margin-bottom: 4px; }
+        .description-body a { color: var(--primary); text-decoration: none; border-bottom: 1px dotted var(--primary); }
+        .description-body a:hover { border-bottom-style: solid; }
 
-        /* 翻译内容的样式 */
+        /* Translation Box */
         .trans-box {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px dashed #cbd5e1;
-            color: var(--primary);
-            font-style: italic;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            color: #92400e;
             font-size: 0.95rem;
-            display: none; /* 默认隐藏，翻译后显示 */
+            line-height: 1.6;
+            display: none;
         }
-        .trans-loading {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            font-style: italic;
-            margin-top: 10px;
-        }
-
-        footer { text-align: center; margin-top: 50px; color: #94a3b8; font-size: 0.85rem; }
+        
+        /* Footer & Loading */
+        footer { text-align: center; margin-top: 60px; color: #94a3b8; font-size: 0.9rem; }
         .loading, .error { text-align: center; padding: 60px; color: var(--text-sub); }
+        .error i { color: #cbd5e1; margin-bottom: 15px; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -309,40 +348,47 @@
                     <option value="es">🇪🇸 Translate to Spanish</option>
                 </select>
             </div>
-            <div style="font-size: 0.85rem; color: #94a3b8; width: 100%; text-align: right; margin-top: 5px;" id="updateTime">
+            <div style="font-size: 0.85rem; color: #94a3b8; width: 100%; text-align: right; margin-top: 8px;" id="updateTime">
                 Loading...
             </div>
         </div>
 
         <div id="app">
-            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Finding special issues...</div>
+            <div class="loading">
+                <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--primary-light)"></i>
+                <br><br>Finding special issues...
+            </div>
         </div>
 
         <footer>
-            Built with ❤️ using GitHub Actions & ScraperAPI
+            Built with ❤️ using GitHub Actions & Python Scraper
         </footer>
     </div>
 
     <script>
         let rawData = null; 
-        const cache = {}; // 内存缓存翻译结果
+        const cache = {}; // Memory cache for translations
 
         async function init() {
             try {
+                // Fetch data
                 const res = await fetch('data/issues.json'); 
                 if (!res.ok) throw new Error("Data file not found");
                 rawData = await res.json();
                 
+                // Set update time
                 document.getElementById('updateTime').innerText = `Last Updated: ${rawData.last_updated}`;
+                
+                // Initial Render
                 render(rawData.journals);
                 
-                // 页面加载后，先自动翻译所有标题
+                // Auto translate titles on load
                 handleGlobalTranslate();
 
             } catch (e) {
                 document.getElementById('app').innerHTML = `
                     <div class="error">
-                        <i class="fas fa-cloud-showers-heavy fa-3x"></i><br><br>
+                        <i class="fas fa-wifi fa-3x"></i><br>
                         Data not ready yet.<br>Please wait for the GitHub Action to finish.
                     </div>`;
                 console.error(e);
@@ -364,11 +410,25 @@
                 const section = document.createElement('div');
                 section.className = 'journal-section';
                 
+                // 🔥 Journal Header with Image Support
                 section.innerHTML = `
                     <div class="journal-header">
-                        <h2>${journal.name}</h2>
-                        <span class="badge">${journal.special_issues.length}</span>
+                        ${journal.image ? 
+                            `<img src="${journal.image}" alt="${journal.name}" class="journal-cover" onerror="this.style.display='none'">` : 
+                            `<div class="journal-cover" style="display:flex; align-items:center; justify-content:center;"><i class="fas fa-book fa-2x" style="color:#cbd5e1"></i></div>`
+                        }
+                        
+                        <div class="journal-info">
+                            <h2>
+                                ${journal.name}
+                                <span class="badge">${journal.special_issues.length} Issues</span>
+                            </h2>
+                            <a href="${journal.url}" target="_blank" class="journal-link">
+                                Visit Website <i class="fas fa-external-link-alt" style="font-size: 0.8em"></i>
+                            </a>
+                        </div>
                     </div>
+                    
                     <div class="issue-list">
                         ${journal.special_issues.map((issue, iIndex) => {
                             const uniqueId = `details-${jIndex}-${iIndex}`;
@@ -395,21 +455,21 @@
 
                                 <div id="${uniqueId}" class="card-details">
                                     <div class="details-content">
-                                        ${issue.guest_editors && issue.guest_editors !== 'Unknown' ? `
+                                        ${issue.guest_editors && issue.guest_editors !== 'Unknown' && issue.guest_editors !== 'Editors info not found.' ? `
                                         <div class="detail-item">
                                             <div class="detail-label"><i class="fas fa-user-friends"></i> Guest Editors</div>
-                                            <div style="color: #475569;">${issue.guest_editors}</div>
+                                            <div style="color: #334155; font-weight: 500;">${issue.guest_editors}</div>
                                         </div>` : ''}
                                         
                                         ${issue.description ? `
                                         <div class="detail-item">
                                             <div class="detail-label"><i class="fas fa-align-left"></i> Description</div>
-                                            <div class="description-body" style="line-height: 1.6;">${issue.description}</div>
+                                            <div class="description-body">${issue.description}</div>
                                             <div class="trans-box"></div>
                                         </div>` : ''}
 
                                         ${(!issue.description && !issue.guest_editors) ? `
-                                        <div style="font-style: italic; opacity: 0.6;">No additional details scraped. Please visit the official link.</div>
+                                        <div style="font-style: italic; opacity: 0.6;">No detailed info scraped. Please check the official link.</div>
                                         ` : ''}
                                     </div>
                                 </div>
@@ -421,61 +481,62 @@
             });
         }
 
-        // --- 核心逻辑 1: 点击展开 + 触发详情翻译 ---
+        // --- Core Logic 1: Toggle Details & Trigger Lazy Translation ---
         window.toggleDetails = function(id, btn) {
             const el = document.getElementById(id);
             const icon = btn.querySelector('i');
             
             if (el.style.maxHeight) {
-                // 关闭
+                // Close
                 el.style.maxHeight = null;
                 btn.classList.remove('active');
                 icon.className = 'fas fa-chevron-down';
                 btn.innerHTML = '<i class="fas fa-chevron-down"></i> Details';
             } else {
-                // 展开
-                el.style.maxHeight = el.scrollHeight + "px"; // 动态计算高度
+                // Open
+                el.style.maxHeight = el.scrollHeight + "px"; // Initial set
                 btn.classList.add('active');
                 icon.className = 'fas fa-chevron-up';
                 btn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
                 
-                // ⚡️ 触发按需翻译
+                // ⚡️ Trigger Lazy Translation for Description
                 translateCardDetails(el);
             }
         }
 
-        // --- 核心逻辑 2: 翻译详情 (按需调用) ---
+        // --- Core Logic 2: Translate Description (Lazy Load) ---
         async function translateCardDetails(detailsElement) {
             const lang = document.getElementById('langSelect').value;
-            if (lang === 'none') return; // 如果选了英文，不翻译
+            if (lang === 'none') return; 
 
             const transBox = detailsElement.querySelector('.trans-box');
             const descBody = detailsElement.querySelector('.description-body');
 
-            // 如果没有简介或者已经翻译过了，直接返回
+            // Skip if no description or already translated
             if (!transBox || !descBody || transBox.innerText.length > 0) return;
 
-            // 显示加载中
+            // Show Loading
             transBox.style.display = 'block';
-            transBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating description...';
+            transBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating summary...';
+            // Update height to fit loading text
+            detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
 
-            // 获取纯文本内容 (去除HTML标签以防翻译API报错)
+            // Get text, truncate to avoid API errors (Google Free API has limits)
             const rawText = descBody.innerText;
-            // 截取前 1500 个字符 (防止 URL 太长报错)
             const textToTrans = rawText.substring(0, 1500) + (rawText.length > 1500 ? '...' : '');
 
             const translated = await translateText(textToTrans, lang);
             
             if (translated) {
                 transBox.innerHTML = `<strong><i class="fas fa-language"></i> AI Summary:</strong><br>${translated}`;
-                // 重新调整高度，因为内容变多了
-                detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
             } else {
-                transBox.style.display = 'none'; // 失败则隐藏
+                transBox.style.display = 'none'; 
             }
+            // Recalculate height after translation insertion
+            detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
         }
 
-        // --- 核心逻辑 3: 搜索 + 全局标题翻译 ---
+        // --- Core Logic 3: Search & Global Title Translation ---
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             if (!rawData) return;
@@ -485,37 +546,36 @@
                     issue.title.toLowerCase().includes(keyword) || 
                     (issue.description && issue.description.toLowerCase().includes(keyword))
                 );
+                // Keep image data when filtering
                 return { ...journal, special_issues: matchingIssues };
             }).filter(j => j.special_issues.length > 0);
 
             render(filteredJournals);
-            handleGlobalTranslate(); // 重新渲染后，记得把标题翻译一遍
+            handleGlobalTranslate(); // Re-translate titles for filtered results
         });
 
-        // 监听语言切换
+        // Language Change Event
         document.getElementById('langSelect').addEventListener('change', () => {
-            // 1. 清空所有已存在的详情翻译，迫使用户重新点开时重新翻译新语言
+            // Clear existing description translations to force re-fetch on next toggle
             document.querySelectorAll('.trans-box').forEach(el => {
                 el.innerHTML = ''; 
                 el.style.display = 'none';
             });
-            // 2. 翻译所有标题
+            // Re-translate all titles immediately
             handleGlobalTranslate();
         });
 
-        // 翻译单个文本 (Google Free API)
+        // Translation API (Google Free)
         async function translateText(text, targetLang) {
             if (!text) return null;
             const key = `${text}_${targetLang}`;
             if (cache[key]) return cache[key];
 
             try {
-                // 使用 encodeURIComponent 处理特殊字符
                 const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
                 const res = await fetch(url);
                 const data = await res.json();
                 
-                // Google API 返回的是数组，需要拼接
                 let result = "";
                 if (data && data[0]) {
                     data[0].forEach(item => {
@@ -526,12 +586,12 @@
                 cache[key] = result;
                 return result;
             } catch (e) {
-                console.warn('Translation API limit or error', e);
+                console.warn('Translation API error', e);
                 return null;
             }
         }
 
-        // 批量翻译可视区域的标题
+        // Global Title Translation
         async function handleGlobalTranslate() {
             const lang = document.getElementById('langSelect').value;
             const cards = document.querySelectorAll('.card');

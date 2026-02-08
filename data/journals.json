@@ -1,15 +1,17 @@
 [
   {
     "name": "Remote Sensing of Environment",
-    "url": "https://www.sciencedirect.com/journal/remote-sensing-of-environment/about/call-for-papers"
+    "url": "https://www.sciencedirect.com/journal/remote-sensing-of-environment/about/call-for-papers",
+    "image": "assets/images/rse.jpg"
   },
   {
     "name": "Cities",
-    "url": "https://www.sciencedirect.com/journal/cities/about/call-for-papers"
+    "url": "https://www.sciencedirect.com/journal/cities/about/call-for-papers",
+    "image": "assets/images/cities.jpg"
   },
   {
     "name": "Building and Environment",
     "url": "https://www.sciencedirect.com/journal/building-and-environment/about/call-for-papers",
-    "image": "https://ars.els-cdn.com/content/image/X03601323.jpg"
+    "image": "assets/images/bae.jpg"
   }
 ]

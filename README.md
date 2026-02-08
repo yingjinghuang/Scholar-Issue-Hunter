@@ -4,7 +4,7 @@
 
 It eliminates the need to manually check journal websites. This system runs automatically in the cloud via **GitHub Actions**, scrapes the latest data, bypasses anti-bot protections, and publishes a beautiful dashboard to **GitHub Pages**.
 
-**[🔴 Live Demo](https://www.google.com/search?q=https://your-username.github.io/your-repo-name/)** ---
+**[🔴 Live Demo](https://yingjinghuang.github.io/Scholar-Issue-Hunter/)**
 
 ## ✨ Features
 

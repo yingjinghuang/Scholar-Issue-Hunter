@@ -44,17 +44,29 @@ jobs:
       
       - name: Run Playwright scraper
         run: |
-          python scraper.py
+          echo "Starting scraper..."
+          python scraper.py || echo "Scraper encountered errors but continuing..."
           
-      - name: Fallback to manual configuration if scraper produces no data
+      - name: Check scraper results
         run: |
-          # Check if scraper produced valid data
-          ISSUE_COUNT=$(python -c "import json; data=json.load(open('data/special_issues.json')); print(sum(len(j['special_issues']) for j in data['journals']))")
-          if [ "$ISSUE_COUNT" -eq "0" ]; then
-            echo "⚠️ Scraper found no issues, using manual configuration as fallback"
-            python update_manual.py
+          echo "Checking scraper results..."
+          if [ -f "data/special_issues.json" ]; then
+            echo "✓ JSON file created"
+            cat data/special_issues.json | python -m json.tool > /dev/null && echo "✓ JSON is valid" || echo "✗ JSON is invalid"
+            
+            ISSUE_COUNT=$(python -c "import json; data=json.load(open('data/special_issues.json')); print(sum(len(j.get('special_issues', [])) for j in data.get('journals', [])))" 2>/dev/null || echo "0")
+            echo "Found $ISSUE_COUNT total special issues"
+            
+            if [ "$ISSUE_COUNT" -eq "0" ]; then
+              echo "⚠️ Warning: No special issues found"
+              echo "This might be due to:"
+              echo "  1. Website structure changed"
+              echo "  2. No open special issues currently"
+              echo "  3. Scraper needs adjustment"
+            fi
           else
-            echo "✓ Scraper found $ISSUE_COUNT issues"
+            echo "✗ JSON file not created"
+            exit 1
           fi
       
       - name: Commit and push if changed

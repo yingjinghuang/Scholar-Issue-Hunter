@@ -37,11 +37,16 @@ class PlaywrightJournalScraper:
             # Try main URL first
             try:
                 print(f"  → Visiting {journal_info['url']}")
-                await page.goto(journal_info['url'], wait_until='domcontentloaded', timeout=30000)
-                await page.wait_for_timeout(2000)  # Wait for dynamic content
                 
-                # Get page content
-                content = await page.content()
+                # Navigate with longer timeout
+                await page.goto(journal_info['url'], wait_until='networkidle', timeout=60000)
+                
+                # Wait for content to load
+                await page.wait_for_timeout(5000)  # Increased to 5 seconds
+                
+                # Scroll to load lazy content
+                await page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+                await page.wait_for_timeout(2000)
                 
                 # Extract special issues from the page
                 issues = await self.extract_special_issues(page, journal_info['url'])
@@ -52,12 +57,16 @@ class PlaywrightJournalScraper:
                 else:
                     print(f"  ⚠ No issues found, trying backup URL...")
                     # Try backup URL
-                    await page.goto(journal_info['backup_url'], wait_until='domcontentloaded', timeout=30000)
-                    await page.wait_for_timeout(2000)
-                    issues = await self.extract_special_issues(page, journal_info['backup_url'])
-                    if issues:
-                        special_issues.extend(issues)
-                        print(f"  ✓ Found {len(issues)} special issues from backup")
+                    if 'backup_url' in journal_info:
+                        await page.goto(journal_info['backup_url'], wait_until='networkidle', timeout=60000)
+                        await page.wait_for_timeout(5000)
+                        await page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+                        await page.wait_for_timeout(2000)
+                        
+                        issues = await self.extract_special_issues(page, journal_info['backup_url'])
+                        if issues:
+                            special_issues.extend(issues)
+                            print(f"  ✓ Found {len(issues)} special issues from backup")
                     
             except Exception as e:
                 print(f"  ✗ Error accessing page: {str(e)[:100]}")
@@ -72,85 +81,137 @@ class PlaywrightJournalScraper:
         issues = []
         
         try:
-            # Method 1: Look for specific elements with special issue content
-            # Try to find all headings that might be special issues
-            headings = await page.query_selector_all('h2, h3, h4, h5')
+            # Get full page text for debugging
+            full_text = await page.inner_text('body')
+            print(f"  Page length: {len(full_text)} characters")
             
-            for heading in headings:
+            # Method 1: Look for links containing "special" or "call"
+            links = await page.query_selector_all('a')
+            print(f"  Found {len(links)} total links on page")
+            
+            special_links = []
+            for link in links:
                 try:
-                    text = await heading.inner_text()
+                    href = await link.get_attribute('href')
+                    text = await link.inner_text()
                     
-                    # Skip generic headings
-                    if not text or len(text) < 15:
-                        continue
-                    if any(skip in text.lower() for skip in ['call for papers', 'special issues', 'about', 'journal']):
-                        continue
-                    
-                    # Get the parent container
-                    parent = await heading.evaluate_handle('el => el.parentElement')
-                    parent_element = parent.as_element()
-                    
-                    if parent_element:
-                        parent_text = await parent_element.inner_text()
-                        
-                        # Extract information
-                        issue = {
-                            'title': text.strip(),
-                            'deadline': self.extract_deadline(parent_text),
-                            'guest_editors': self.extract_editors(parent_text),
-                            'description': self.extract_description(parent_text, text),
-                            'url': base_url
-                        }
-                        
-                        # Try to find a specific link
-                        link = await parent_element.query_selector('a')
-                        if link:
-                            href = await link.get_attribute('href')
-                            if href:
-                                if href.startswith('http'):
-                                    issue['url'] = href
-                                elif href.startswith('/'):
-                                    issue['url'] = 'https://www.sciencedirect.com' + href
-                        
-                        # Only add if we found at least a title
-                        if issue['title'] and len(issue['title']) > 15:
-                            issues.append(issue)
-                            
-                except Exception as e:
+                    if text and href:
+                        text_lower = text.lower()
+                        # Look for special issue indicators
+                        if any(keyword in text_lower for keyword in ['special issue', 'call for papers', 'call for paper']):
+                            special_links.append({
+                                'text': text.strip(),
+                                'href': href
+                            })
+                except:
                     continue
             
-            # Method 2: Look for article/section elements
+            print(f"  Found {len(special_links)} potential special issue links")
+            
+            # Extract from special links
+            for link_info in special_links:
+                # Try to find more context around this link
+                try:
+                    # Use the link text as title
+                    title = link_info['text']
+                    
+                    # Skip generic titles
+                    if len(title) < 15 or title.lower() in ['special issues', 'call for papers', 'view all']:
+                        continue
+                    
+                    # Build URL
+                    url = link_info['href']
+                    if url.startswith('/'):
+                        url = 'https://www.sciencedirect.com' + url
+                    elif not url.startswith('http'):
+                        url = base_url
+                    
+                    issue = {
+                        'title': title,
+                        'deadline': None,
+                        'guest_editors': None,
+                        'description': None,
+                        'url': url
+                    }
+                    
+                    issues.append(issue)
+                    print(f"  ✓ Found: {title[:60]}...")
+                    
+                except Exception as e:
+                    print(f"  Error processing link: {str(e)[:50]}")
+                    continue
+            
+            # Method 2: Look for structured content blocks
             if not issues:
-                sections = await page.query_selector_all('article, section, div[class*="special"], div[class*="call"]')
+                print("  Trying alternative method: structured blocks...")
                 
-                for section in sections[:20]:  # Limit to avoid noise
+                # Look for div/section elements that might contain special issues
+                blocks = await page.query_selector_all('div, section, article')
+                
+                for block in blocks[:50]:  # Limit to avoid too much processing
                     try:
-                        text = await section.inner_text()
+                        text = await block.inner_text()
                         
-                        # Look for deadline indicators
-                        if 'deadline' in text.lower() or 'submission' in text.lower():
-                            heading = await section.query_selector('h2, h3, h4, h5')
-                            if heading:
-                                title = await heading.inner_text()
+                        # Check if this block mentions deadlines or special issues
+                        if len(text) > 100 and len(text) < 5000:
+                            if 'deadline' in text.lower() or 'special issue' in text.lower():
+                                # Try to find a heading
+                                heading = await block.query_selector('h1, h2, h3, h4, h5, strong, b')
                                 
-                                issue = {
-                                    'title': title.strip(),
-                                    'deadline': self.extract_deadline(text),
-                                    'guest_editors': self.extract_editors(text),
-                                    'description': self.extract_description(text, title),
-                                    'url': base_url
-                                }
-                                
-                                if issue['title'] and len(issue['title']) > 15:
-                                    issues.append(issue)
+                                if heading:
+                                    title = await heading.inner_text()
+                                    
+                                    if len(title) > 15 and len(title) < 200:
+                                        issue = {
+                                            'title': title.strip(),
+                                            'deadline': self.extract_deadline(text),
+                                            'guest_editors': self.extract_editors(text),
+                                            'description': self.extract_description(text, title),
+                                            'url': base_url
+                                        }
+                                        
+                                        issues.append(issue)
+                                        print(f"  ✓ Found via blocks: {title[:60]}...")
                     except:
                         continue
+            
+            # Method 3: Search for deadline patterns in full text
+            if not issues:
+                print("  Trying method 3: scanning full text for deadlines...")
+                
+                # Split text into paragraphs
+                paragraphs = full_text.split('\n\n')
+                
+                for para in paragraphs:
+                    if len(para) > 50 and 'deadline' in para.lower():
+                        # Look for a title in this paragraph
+                        lines = para.split('\n')
+                        if lines:
+                            title = lines[0].strip()
+                            
+                            if len(title) > 15 and len(title) < 200:
+                                deadline = self.extract_deadline(para)
+                                
+                                if deadline:  # Only add if we found a deadline
+                                    issue = {
+                                        'title': title,
+                                        'deadline': deadline,
+                                        'guest_editors': self.extract_editors(para),
+                                        'description': self.extract_description(para, title),
+                                        'url': base_url
+                                    }
+                                    
+                                    issues.append(issue)
+                                    print(f"  ✓ Found via text scan: {title[:60]}...")
                         
         except Exception as e:
-            print(f"  Error extracting issues: {str(e)[:100]}")
+            print(f"  Error extracting issues: {str(e)}")
         
         # Deduplicate
-        return self.deduplicate_issues(issues)
+        unique_issues = self.deduplicate_issues(issues)
+        print(f"  → Total unique issues: {len(unique_issues)}")
+        
+        return unique_issues
 
     def extract_deadline(self, text: str) -> str:
         """Extract deadline from text"""
@@ -471,21 +532,27 @@ if __name__ == '__main__':
         
         print(f"\nData saved to {filepath}")
 
-def main():
-    scraper = JournalScraper()
-    data = scraper.scrape_all()
+async def main():
+    scraper = PlaywrightJournalScraper()
+    
+    print("=" * 60)
+    print("🚀 Starting Playwright Journal Scraper")
+    print("=" * 60)
+    
+    data = await scraper.scrape_all()
     
     # Save to data directory
     output_path = 'data/special_issues.json'
     scraper.save_to_json(data, output_path)
     
-    print(f"\n{'='*50}")
-    print(f"Scraping completed!")
-    print(f"{'='*50}")
+    print(f"\n{'=' * 60}")
+    print(f"✅ Scraping completed!")
+    print(f"{'=' * 60}")
     print(f"Total journals: {len(data['journals'])}")
     for journal in data['journals']:
-        print(f"  ✓ {journal['name']}: {len(journal['special_issues'])} special issues")
-    print(f"{'='*50}\n")
+        status = "✓" if len(journal['special_issues']) > 0 else "⚠"
+        print(f"  {status} {journal['name']}: {len(journal['special_issues'])} special issues")
+    print(f"{'=' * 60}\n")
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

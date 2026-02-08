@@ -74,7 +74,7 @@ jobs:
         if: always()  # 即使前面失败了也执行
         with:
           name: debug-screenshots
-          path: scripts/*.png  # 或者你的脚本保存截图的路径
+          path: *.png  # 或者你的脚本保存截图的路径
           retention-days: 5
       
       - name: Commit and push if changed

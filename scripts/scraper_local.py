@@ -31,3 +31,4 @@ if __name__ == "__main__":
     test_single_url("test_data/cities.html", "Cities")
     test_single_url("test_data/rse.html", "Remote Sensing of Environment")
     test_single_url("test_data/bae.html", "Building and Environment")
+    test_single_url("test_data/ceus.html", "Computers, Environment and Urban Systems")

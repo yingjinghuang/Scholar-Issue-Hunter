@@ -10,7 +10,6 @@
             --primary: #4f46e5;
             --primary-light: #e0e7ff;
             --bg: #f1f5f9;
-            --card-bg: #ffffff;
             --text-main: #1e293b;
             --text-sub: #64748b;
             --danger: #ef4444;
@@ -61,125 +60,154 @@
             margin-bottom: 30px;
         }
 
-        .search-box {
+        /* Control Items Layout */
+        .control-group {
+            display: flex;
+            gap: 10px;
             flex: 1;
-            position: relative;
-            min-width: 200px;
+            min-width: 300px;
         }
 
-        .search-box input {
+        .search-box {
+            flex: 2;
+            position: relative;
+        }
+
+        .filter-box {
+            flex: 1;
+            position: relative;
+            min-width: 150px;
+        }
+
+        .search-box input, .filter-box select, .settings select {
             width: 100%;
-            padding: 12px 15px 12px 40px;
+            padding: 10px 15px 10px 35px;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-size: 0.95rem;
             transition: all 0.2s;
+            background-color: white;
+            color: var(--text-main);
+            height: 42px; /* Uniform height */
         }
+        
+        .settings select { padding-left: 10px; } /* Lang select doesn't need left padding for icon */
 
-        .search-box input:focus {
+        .search-box input:focus, .filter-box select:focus, .settings select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
         }
 
-        .search-box i {
+        .search-box i, .filter-box i {
             position: absolute;
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: #94a3b8;
-        }
-
-        .settings select {
-            padding: 10px 35px 10px 15px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: white url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 0.7rem center/1.2em 1.2em;
-            cursor: pointer;
-            font-size: 0.95rem;
-            color: var(--text-main);
+            pointer-events: none;
         }
 
         /* --- Journal Section & Header --- */
         .journal-section {
-            margin-bottom: 40px;
+            margin-bottom: 25px;
             animation: fadeIn 0.5s ease-out;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden; /* For smooth collapsing */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
         .journal-header {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 20px;
+            padding: 15px 20px;
             background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            border-left: 5px solid var(--primary);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer; /* Clickable */
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .journal-header:hover {
+            background-color: #f8fafc;
         }
 
         .journal-cover {
-            width: 60px;
-            height: 80px;
+            width: 50px;
+            height: 70px;
             object-fit: cover;
             border-radius: 4px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            margin-right: 20px;
+            margin-right: 15px;
             background-color: #f1f5f9;
         }
 
+        .journal-info { flex: 1; }
+
         .journal-info h2 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--text-main);
-            margin: 0 0 5px 0;
+            margin: 0;
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
             gap: 10px;
         }
 
         .badge {
             background: var(--primary-light);
             color: var(--primary);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
             vertical-align: middle;
         }
 
-        .journal-link {
-            font-size: 0.9rem;
-            color: var(--text-sub);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: color 0.2s;
+        .toggle-icon {
+            color: #cbd5e1;
+            transition: transform 0.3s ease;
         }
-        .journal-link:hover { color: var(--primary); }
 
-        /* --- Card Styles --- */
+        /* Collapsed State */
+        .journal-section.collapsed .issue-list {
+            display: none;
+        }
+        .journal-section.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        .journal-section.collapsed {
+            border-bottom: 1px solid #e2e8f0; /* Restore border when collapsed */
+        }
+
+        /* --- Issue List & Card --- */
+        .issue-list {
+            padding: 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1px solid #e2e8f0;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             transition: transform 0.2s, box-shadow 0.2s;
             overflow: hidden;
         }
+        .card:last-child { margin-bottom: 0; }
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .card-main {
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 10px;
         }
 
         @media(min-width: 768px) {
@@ -193,20 +221,20 @@
         .card-info { flex: 1; }
 
         .card-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 8px;
-            line-height: 1.5;
+            margin-bottom: 6px;
+            line-height: 1.4;
         }
 
         .card-trans {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 500;
-            display: none; /* Hidden by default */
-            padding: 8px 12px;
+            display: none;
+            padding: 6px 10px;
             background: #eff6ff;
             border-radius: 6px;
             border-left: 3px solid var(--primary);
@@ -215,26 +243,25 @@
         .deadline-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             background: var(--danger-bg);
             color: var(--danger);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
-        /* --- Actions --- */
         .card-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-shrink: 0;
         }
         
         .btn {
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
@@ -242,88 +269,40 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             border: none;
-            white-space: nowrap;
         }
 
         .btn-toggle { background: #f1f5f9; color: #475569; }
-        .btn-toggle:hover { background: #e2e8f0; color: #1e293b; }
-        .btn-toggle.active { background: #e2e8f0; color: var(--primary); }
-
+        .btn-toggle:hover { background: #e2e8f0; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #4338ca; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-primary:hover { background: #4338ca; }
 
-        /* --- Expandable Details --- */
+        /* Expandable Details */
         .card-details {
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
+            background: #ffffff;
+            border-top: 1px dashed #e2e8f0;
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
         }
+        .card-details.open { max-height: 3000px; transition: max-height 0.8s ease-in-out; }
 
-        .card-details.open {
-            max-height: 3000px; /* Allow enough height */
-            transition: max-height 0.8s ease-in-out;
-        }
-
-        .details-content {
-            padding: 25px;
-            font-size: 0.95rem;
-            color: var(--text-sub);
-        }
-
-        .detail-item { margin-bottom: 25px; }
-        .detail-item:last-child { margin-bottom: 0; }
-
-        .detail-label {
-            font-weight: 700;
-            color: #334155;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 5px;
-        }
-
-        /* Description Content Styling */
-        .description-body {
-            line-height: 1.7;
-            color: #475569;
-        }
-        .description-body p { margin-bottom: 12px; }
-        .description-body ul { margin-left: 20px; margin-bottom: 12px; }
-        .description-body li { margin-bottom: 4px; }
-        .description-body a { color: var(--primary); text-decoration: none; border-bottom: 1px dotted var(--primary); }
-        .description-body a:hover { border-bottom-style: solid; }
-
-        /* Translation Box */
-        .trans-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #fffbeb;
-            border: 1px solid #fcd34d;
-            border-radius: 8px;
-            color: #92400e;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            display: none;
-        }
+        .details-content { padding: 20px; font-size: 0.9rem; color: var(--text-sub); }
+        .detail-item { margin-bottom: 20px; }
+        .detail-label { font-weight: 700; color: #334155; margin-bottom: 5px; font-size: 0.85rem; text-transform: uppercase; }
         
-        /* Footer & Loading */
-        footer { text-align: center; margin-top: 60px; color: #94a3b8; font-size: 0.9rem; }
-        .loading, .error { text-align: center; padding: 60px; color: var(--text-sub); }
-        .error i { color: #cbd5e1; margin-bottom: 15px; }
+        .description-body { line-height: 1.7; color: #475569; }
+        .description-body p, .description-body ul { margin-bottom: 10px; }
+        .description-body ul { margin-left: 20px; }
+        .description-body a { color: var(--primary); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .trans-box { margin-top: 15px; padding: 12px; background-color: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; color: #92400e; font-size: 0.9rem; display: none; }
+
+        footer { text-align: center; margin-top: 50px; color: #94a3b8; font-size: 0.85rem; }
+        .loading, .error { text-align: center; padding: 40px; color: var(--text-sub); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -335,64 +314,81 @@
 
     <div class="container">
         <div class="controls">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Filter by keywords (e.g., 'Urban', 'AI')...">
+            <div class="control-group">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search keywords...">
+                </div>
+                <div class="filter-box">
+                    <i class="fas fa-filter"></i>
+                    <select id="journalFilter">
+                        <option value="all">All Journals</option>
+                        </select>
+                </div>
             </div>
+            
             <div class="settings">
                 <select id="langSelect">
-                    <option value="none">🇬🇧 English (Original)</option>
-                    <option value="zh-CN" selected>🇨🇳 Translate to Chinese</option>
-                    <option value="ja">🇯🇵 Translate to Japanese</option>
-                    <option value="ko">🇰🇷 Translate to Korean</option>
-                    <option value="es">🇪🇸 Translate to Spanish</option>
+                    <option value="none">🇬🇧 English</option>
+                    <option value="zh-CN" selected>🇨🇳 Chinese</option>
+                    <option value="ja">🇯🇵 Japanese</option>
+                    <option value="ko">🇰🇷 Korean</option>
                 </select>
             </div>
-            <div style="font-size: 0.85rem; color: #94a3b8; width: 100%; text-align: right; margin-top: 8px;" id="updateTime">
+            
+            <div style="font-size: 0.8rem; color: #94a3b8; width: 100%; text-align: right; margin-top: 5px;" id="updateTime">
                 Loading...
             </div>
         </div>
 
         <div id="app">
             <div class="loading">
-                <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--primary-light)"></i>
+                <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--primary-light)"></i>
                 <br><br>Finding special issues...
             </div>
         </div>
 
         <footer>
-            Built with ❤️ using GitHub Actions & Python Scraper
+            Built with ❤️ using GitHub Actions
         </footer>
     </div>
 
     <script>
         let rawData = null; 
-        const cache = {}; // Memory cache for translations
+        const cache = {};
 
         async function init() {
             try {
-                // Fetch data
                 const res = await fetch('data/issues.json'); 
                 if (!res.ok) throw new Error("Data file not found");
                 rawData = await res.json();
                 
-                // Set update time
-                document.getElementById('updateTime').innerText = `Last Updated: ${rawData.last_updated}`;
+                document.getElementById('updateTime').innerText = `Updated: ${rawData.last_updated}`;
                 
-                // Initial Render
+                // 1. Populate Journal Filter Dropdown
+                populateJournalFilter(rawData.journals);
+
+                // 2. Initial Render
                 render(rawData.journals);
                 
-                // Auto translate titles on load
+                // 3. Auto Translate
                 handleGlobalTranslate();
 
             } catch (e) {
-                document.getElementById('app').innerHTML = `
-                    <div class="error">
-                        <i class="fas fa-wifi fa-3x"></i><br>
-                        Data not ready yet.<br>Please wait for the GitHub Action to finish.
-                    </div>`;
+                document.getElementById('app').innerHTML = `<div class="error">Data not ready yet.</div>`;
                 console.error(e);
             }
+        }
+
+        // --- Logic: Populate Filter Dropdown ---
+        function populateJournalFilter(journals) {
+            const select = document.getElementById('journalFilter');
+            journals.forEach(j => {
+                const option = document.createElement('option');
+                option.value = j.name; // Use journal name as value
+                option.innerText = j.name;
+                select.appendChild(option);
+            });
         }
 
         function render(journals) {
@@ -408,25 +404,29 @@
                 if (!journal.special_issues || journal.special_issues.length === 0) return;
 
                 const section = document.createElement('div');
-                section.className = 'journal-section';
+                section.className = 'journal-section'; // 默认展开
+                section.id = `journal-section-${jIndex}`;
                 
-                // 🔥 Journal Header with Image Support
+                // 🔥 Journal Header (Clickable for Collapse)
                 section.innerHTML = `
-                    <div class="journal-header">
+                    <div class="journal-header" onclick="toggleJournalSection('${jIndex}')">
                         ${journal.image ? 
                             `<img src="${journal.image}" alt="${journal.name}" class="journal-cover" onerror="this.style.display='none'">` : 
-                            `<div class="journal-cover" style="display:flex; align-items:center; justify-content:center;"><i class="fas fa-book fa-2x" style="color:#cbd5e1"></i></div>`
+                            `<div class="journal-cover" style="display:flex; align-items:center; justify-content:center;"><i class="fas fa-book fa-lg" style="color:#cbd5e1"></i></div>`
                         }
                         
                         <div class="journal-info">
                             <h2>
                                 ${journal.name}
-                                <span class="badge">${journal.special_issues.length} Issues</span>
+                                <span class="badge">${journal.special_issues.length}</span>
                             </h2>
-                            <a href="${journal.url}" target="_blank" class="journal-link">
-                                Visit Website <i class="fas fa-external-link-alt" style="font-size: 0.8em"></i>
-                            </a>
+                            <div style="font-size:0.85rem; color:#94a3b8; margin-top:2px;">
+                                <a href="${journal.url}" target="_blank" onclick="event.stopPropagation()" style="color:inherit; text-decoration:none;">
+                                    Official Page <i class="fas fa-external-link-alt" style="font-size:0.7em"></i>
+                                </a>
+                            </div>
                         </div>
+                        <div class="toggle-icon"><i class="fas fa-chevron-down"></i></div>
                     </div>
                     
                     <div class="issue-list">
@@ -439,25 +439,24 @@
                                         <div class="card-title">${issue.title}</div>
                                         <div class="card-trans"></div>
                                         <div class="deadline-badge">
-                                            <i class="far fa-clock"></i> 
-                                            Due: ${issue.deadline || 'Check Link'}
+                                            <i class="far fa-clock"></i> ${issue.deadline || 'Check Link'}
                                         </div>
                                     </div>
                                     <div class="card-actions">
                                         <button class="btn btn-toggle" onclick="toggleDetails('${uniqueId}', this)">
-                                            <i class="fas fa-chevron-down"></i> Details
+                                            Details
                                         </button>
                                         <a href="${issue.url}" target="_blank" class="btn btn-primary">
-                                            Apply <i class="fas fa-external-link-alt"></i>
+                                            Apply
                                         </a>
                                     </div>
                                 </div>
 
                                 <div id="${uniqueId}" class="card-details">
                                     <div class="details-content">
-                                        ${issue.guest_editors && issue.guest_editors !== 'Unknown' && issue.guest_editors !== 'Editors info not found.' ? `
+                                        ${issue.guest_editors && issue.guest_editors !== 'Unknown' && issue.guest_editors !== 'See website' ? `
                                         <div class="detail-item">
-                                            <div class="detail-label"><i class="fas fa-user-friends"></i> Guest Editors</div>
+                                            <div class="detail-label"><i class="fas fa-user-friends"></i> Editors</div>
                                             <div style="color: #334155; font-weight: 500;">${issue.guest_editors}</div>
                                         </div>` : ''}
                                         
@@ -467,10 +466,6 @@
                                             <div class="description-body">${issue.description}</div>
                                             <div class="trans-box"></div>
                                         </div>` : ''}
-
-                                        ${(!issue.description && !issue.guest_editors) ? `
-                                        <div style="font-style: italic; opacity: 0.6;">No detailed info scraped. Please check the official link.</div>
-                                        ` : ''}
                                     </div>
                                 </div>
                             </div>
@@ -481,137 +476,115 @@
             });
         }
 
-        // --- Core Logic 1: Toggle Details & Trigger Lazy Translation ---
+        // --- Logic: Collapse/Expand Journal Section ---
+        window.toggleJournalSection = function(index) {
+            const section = document.getElementById(`journal-section-${index}`);
+            section.classList.toggle('collapsed');
+        }
+
+        // --- Logic: Toggle Details Card ---
         window.toggleDetails = function(id, btn) {
             const el = document.getElementById(id);
-            const icon = btn.querySelector('i');
-            
             if (el.style.maxHeight) {
-                // Close
                 el.style.maxHeight = null;
                 btn.classList.remove('active');
-                icon.className = 'fas fa-chevron-down';
-                btn.innerHTML = '<i class="fas fa-chevron-down"></i> Details';
+                btn.innerHTML = 'Details';
             } else {
-                // Open
-                el.style.maxHeight = el.scrollHeight + "px"; // Initial set
+                el.style.maxHeight = el.scrollHeight + "px";
                 btn.classList.add('active');
-                icon.className = 'fas fa-chevron-up';
-                btn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
-                
-                // ⚡️ Trigger Lazy Translation for Description
+                btn.innerHTML = 'Hide';
                 translateCardDetails(el);
             }
         }
 
-        // --- Core Logic 2: Translate Description (Lazy Load) ---
-        async function translateCardDetails(detailsElement) {
-            const lang = document.getElementById('langSelect').value;
-            if (lang === 'none') return; 
-
-            const transBox = detailsElement.querySelector('.trans-box');
-            const descBody = detailsElement.querySelector('.description-body');
-
-            // Skip if no description or already translated
-            if (!transBox || !descBody || transBox.innerText.length > 0) return;
-
-            // Show Loading
-            transBox.style.display = 'block';
-            transBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating summary...';
-            // Update height to fit loading text
-            detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
-
-            // Get text, truncate to avoid API errors (Google Free API has limits)
-            const rawText = descBody.innerText;
-            const textToTrans = rawText.substring(0, 1500) + (rawText.length > 1500 ? '...' : '');
-
-            const translated = await translateText(textToTrans, lang);
-            
-            if (translated) {
-                transBox.innerHTML = `<strong><i class="fas fa-language"></i> AI Summary:</strong><br>${translated}`;
-            } else {
-                transBox.style.display = 'none'; 
-            }
-            // Recalculate height after translation insertion
-            detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
-        }
-
-        // --- Core Logic 3: Search & Global Title Translation ---
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase();
+        // --- Logic: Filter by Journal & Search ---
+        function applyFilters() {
             if (!rawData) return;
+            
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const selectedJournal = document.getElementById('journalFilter').value;
 
             const filteredJournals = rawData.journals.map(journal => {
+                // 1. Filter by Journal Name
+                if (selectedJournal !== 'all' && journal.name !== selectedJournal) {
+                    return null; // Skip this journal
+                }
+
+                // 2. Filter by Keyword (Issue level)
                 const matchingIssues = journal.special_issues.filter(issue => 
                     issue.title.toLowerCase().includes(keyword) || 
                     (issue.description && issue.description.toLowerCase().includes(keyword))
                 );
-                // Keep image data when filtering
+
+                // If filtering by keyword, only show if issues match. 
+                // If filtering by journal only (keyword empty), show journal even if no issues (though data usually has issues).
+                if (keyword && matchingIssues.length === 0) return null;
+
                 return { ...journal, special_issues: matchingIssues };
-            }).filter(j => j.special_issues.length > 0);
+            }).filter(j => j !== null);
 
             render(filteredJournals);
-            handleGlobalTranslate(); // Re-translate titles for filtered results
-        });
+            handleGlobalTranslate();
+        }
 
-        // Language Change Event
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('journalFilter').addEventListener('change', applyFilters);
+
+        // --- Logic: Translations ---
         document.getElementById('langSelect').addEventListener('change', () => {
-            // Clear existing description translations to force re-fetch on next toggle
-            document.querySelectorAll('.trans-box').forEach(el => {
-                el.innerHTML = ''; 
-                el.style.display = 'none';
-            });
-            // Re-translate all titles immediately
+            document.querySelectorAll('.trans-box').forEach(el => { el.innerHTML = ''; el.style.display = 'none'; });
             handleGlobalTranslate();
         });
 
-        // Translation API (Google Free)
         async function translateText(text, targetLang) {
             if (!text) return null;
             const key = `${text}_${targetLang}`;
             if (cache[key]) return cache[key];
-
             try {
                 const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
                 const res = await fetch(url);
                 const data = await res.json();
-                
                 let result = "";
-                if (data && data[0]) {
-                    data[0].forEach(item => {
-                        if (item[0]) result += item[0];
-                    });
-                }
-                
+                if (data && data[0]) data[0].forEach(item => { if (item[0]) result += item[0]; });
                 cache[key] = result;
                 return result;
-            } catch (e) {
-                console.warn('Translation API error', e);
-                return null;
-            }
+            } catch (e) { return null; }
         }
 
-        // Global Title Translation
         async function handleGlobalTranslate() {
             const lang = document.getElementById('langSelect').value;
             const cards = document.querySelectorAll('.card');
-
             if (lang === 'none') {
                 cards.forEach(card => card.querySelector('.card-trans').style.display = 'none');
                 return;
             }
-
             for (const card of cards) {
                 const title = card.getAttribute('data-title');
                 const transEl = card.querySelector('.card-trans');
-                
                 transEl.style.display = 'block';
                 if (!transEl.innerText) transEl.innerText = 'Translating...';
-
-                translateText(title, lang).then(trans => {
-                    if(trans) transEl.innerText = trans;
-                });
+                translateText(title, lang).then(trans => { if(trans) transEl.innerText = trans; });
             }
+        }
+
+        async function translateCardDetails(detailsElement) {
+            const lang = document.getElementById('langSelect').value;
+            if (lang === 'none') return;
+            const transBox = detailsElement.querySelector('.trans-box');
+            const descBody = detailsElement.querySelector('.description-body');
+            if (!transBox || !descBody || transBox.innerText.length > 0) return;
+
+            transBox.style.display = 'block';
+            transBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating summary...';
+            detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
+
+            const rawText = descBody.innerText;
+            const textToTrans = rawText.substring(0, 1500) + (rawText.length > 1500 ? '...' : '');
+            const translated = await translateText(textToTrans, lang);
+            
+            if (translated) transBox.innerHTML = `<strong><i class="fas fa-language"></i> AI Summary:</strong><br>${translated}`;
+            else transBox.style.display = 'none';
+            detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
         }
 
         init();

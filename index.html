@@ -31,7 +31,7 @@
         header {
             background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
             color: white;
-            padding: 40px 20px 80px; /* Extra padding for overlap */
+            padding: 40px 20px 80px;
             text-align: center;
         }
 
@@ -41,7 +41,7 @@
         /* --- Container --- */
         .container {
             max-width: 1000px;
-            margin: -50px auto 0; /* Overlap header */
+            margin: -50px auto 0;
             padding: 0 20px;
             position: relative;
             z-index: 10;
@@ -159,9 +159,7 @@
             }
         }
 
-        .card-info {
-            flex: 1;
-        }
+        .card-info { flex: 1; }
 
         .card-title {
             font-size: 1.1rem;
@@ -171,6 +169,7 @@
             line-height: 1.4;
         }
 
+        /* 标题翻译样式 */
         .card-trans {
             font-size: 0.95rem;
             color: var(--primary);
@@ -191,16 +190,14 @@
             font-weight: 600;
         }
 
-        /* --- Actions (Buttons) --- */
+        /* --- Actions --- */
         .card-actions {
             display: flex;
             gap: 10px;
             margin-top: 10px;
         }
         
-        @media(min-width: 768px) {
-            .card-actions { margin-top: 0; }
-        }
+        @media(min-width: 768px) { .card-actions { margin-top: 0; } }
 
         .btn {
             padding: 8px 16px;
@@ -216,16 +213,11 @@
             border: none;
         }
 
-        .btn-toggle {
-            background: #f1f5f9;
-            color: #475569;
-        }
+        .btn-toggle { background: #f1f5f9; color: #475569; }
         .btn-toggle:hover { background: #e2e8f0; }
+        .btn-toggle.active { background: #e2e8f0; color: var(--primary); }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+        .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: #4338ca; }
 
         /* --- Expandable Details --- */
@@ -234,12 +226,12 @@
             border-top: 1px solid #e2e8f0;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1); /* Smooth slide */
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
         }
 
         .card-details.open {
-            max-height: 1000px; /* Arbitrary large height */
-            transition: max-height 0.5s ease-in-out;
+            max-height: 2000px; /* 足够大以容纳内容 */
+            transition: max-height 0.6s ease-in-out;
         }
 
         .details-content {
@@ -248,34 +240,46 @@
             color: var(--text-sub);
         }
 
-        .detail-item {
-            margin-bottom: 15px;
-        }
-        
+        .detail-item { margin-bottom: 20px; }
         .detail-item:last-child { margin-bottom: 0; }
 
         .detail-label {
             font-weight: 600;
             color: #334155;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* --- Footer --- */
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #94a3b8;
+        /* 详情内容的排版修正 */
+        .description-body ul { margin-left: 20px; margin-bottom: 10px; }
+        .description-body p { margin-bottom: 10px; }
+        .description-body a { color: var(--primary); text-decoration: none; }
+        .description-body a:hover { text-decoration: underline; }
+
+        /* 翻译内容的样式 */
+        .trans-box {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #cbd5e1;
+            color: var(--primary);
+            font-style: italic;
+            font-size: 0.95rem;
+            display: none; /* 默认隐藏，翻译后显示 */
+        }
+        .trans-loading {
             font-size: 0.85rem;
+            color: #94a3b8;
+            font-style: italic;
+            margin-top: 10px;
         }
 
-        .loading, .error {
-            text-align: center;
-            padding: 60px;
-            color: var(--text-sub);
-        }
+        footer { text-align: center; margin-top: 50px; color: #94a3b8; font-size: 0.85rem; }
+        .loading, .error { text-align: center; padding: 60px; color: var(--text-sub); }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -302,6 +306,7 @@
                     <option value="zh-CN" selected>🇨🇳 Translate to Chinese</option>
                     <option value="ja">🇯🇵 Translate to Japanese</option>
                     <option value="ko">🇰🇷 Translate to Korean</option>
+                    <option value="es">🇪🇸 Translate to Spanish</option>
                 </select>
             </div>
             <div style="font-size: 0.85rem; color: #94a3b8; width: 100%; text-align: right; margin-top: 5px;" id="updateTime">
@@ -320,24 +325,19 @@
 
     <script>
         let rawData = null; 
-        const cache = {};
+        const cache = {}; // 内存缓存翻译结果
 
         async function init() {
             try {
-                // Fetch Data
                 const res = await fetch('data/issues.json'); 
                 if (!res.ok) throw new Error("Data file not found");
-                
                 rawData = await res.json();
                 
-                // Update Time
                 document.getElementById('updateTime').innerText = `Last Updated: ${rawData.last_updated}`;
-                
-                // Render
                 render(rawData.journals);
                 
-                // Auto Translate
-                handleTranslate();
+                // 页面加载后，先自动翻译所有标题
+                handleGlobalTranslate();
 
             } catch (e) {
                 document.getElementById('app').innerHTML = `
@@ -404,7 +404,8 @@
                                         ${issue.description ? `
                                         <div class="detail-item">
                                             <div class="detail-label"><i class="fas fa-align-left"></i> Description</div>
-                                            <div style="line-height: 1.6;">${issue.description}</div>
+                                            <div class="description-body" style="line-height: 1.6;">${issue.description}</div>
+                                            <div class="trans-box"></div>
                                         </div>` : ''}
 
                                         ${(!issue.description && !issue.guest_editors) ? `
@@ -420,27 +421,61 @@
             });
         }
 
-        // Toggle Animation Logic
+        // --- 核心逻辑 1: 点击展开 + 触发详情翻译 ---
         window.toggleDetails = function(id, btn) {
             const el = document.getElementById(id);
             const icon = btn.querySelector('i');
             
             if (el.style.maxHeight) {
-                // Close
+                // 关闭
                 el.style.maxHeight = null;
                 btn.classList.remove('active');
                 icon.className = 'fas fa-chevron-down';
                 btn.innerHTML = '<i class="fas fa-chevron-down"></i> Details';
             } else {
-                // Open
-                el.style.maxHeight = el.scrollHeight + "px";
+                // 展开
+                el.style.maxHeight = el.scrollHeight + "px"; // 动态计算高度
                 btn.classList.add('active');
                 icon.className = 'fas fa-chevron-up';
                 btn.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
+                
+                // ⚡️ 触发按需翻译
+                translateCardDetails(el);
             }
         }
 
-        // Search Logic
+        // --- 核心逻辑 2: 翻译详情 (按需调用) ---
+        async function translateCardDetails(detailsElement) {
+            const lang = document.getElementById('langSelect').value;
+            if (lang === 'none') return; // 如果选了英文，不翻译
+
+            const transBox = detailsElement.querySelector('.trans-box');
+            const descBody = detailsElement.querySelector('.description-body');
+
+            // 如果没有简介或者已经翻译过了，直接返回
+            if (!transBox || !descBody || transBox.innerText.length > 0) return;
+
+            // 显示加载中
+            transBox.style.display = 'block';
+            transBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating description...';
+
+            // 获取纯文本内容 (去除HTML标签以防翻译API报错)
+            const rawText = descBody.innerText;
+            // 截取前 1500 个字符 (防止 URL 太长报错)
+            const textToTrans = rawText.substring(0, 1500) + (rawText.length > 1500 ? '...' : '');
+
+            const translated = await translateText(textToTrans, lang);
+            
+            if (translated) {
+                transBox.innerHTML = `<strong><i class="fas fa-language"></i> AI Summary:</strong><br>${translated}`;
+                // 重新调整高度，因为内容变多了
+                detailsElement.style.maxHeight = detailsElement.scrollHeight + "px";
+            } else {
+                transBox.style.display = 'none'; // 失败则隐藏
+            }
+        }
+
+        // --- 核心逻辑 3: 搜索 + 全局标题翻译 ---
         document.getElementById('searchInput').addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
             if (!rawData) return;
@@ -454,30 +489,50 @@
             }).filter(j => j.special_issues.length > 0);
 
             render(filteredJournals);
-            handleTranslate();
+            handleGlobalTranslate(); // 重新渲染后，记得把标题翻译一遍
         });
 
-        // Translation Logic
+        // 监听语言切换
+        document.getElementById('langSelect').addEventListener('change', () => {
+            // 1. 清空所有已存在的详情翻译，迫使用户重新点开时重新翻译新语言
+            document.querySelectorAll('.trans-box').forEach(el => {
+                el.innerHTML = ''; 
+                el.style.display = 'none';
+            });
+            // 2. 翻译所有标题
+            handleGlobalTranslate();
+        });
+
+        // 翻译单个文本 (Google Free API)
         async function translateText(text, targetLang) {
+            if (!text) return null;
             const key = `${text}_${targetLang}`;
             if (cache[key]) return cache[key];
 
             try {
+                // 使用 encodeURIComponent 处理特殊字符
                 const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
                 const res = await fetch(url);
                 const data = await res.json();
-                const result = data[0][0][0];
+                
+                // Google API 返回的是数组，需要拼接
+                let result = "";
+                if (data && data[0]) {
+                    data[0].forEach(item => {
+                        if (item[0]) result += item[0];
+                    });
+                }
+                
                 cache[key] = result;
                 return result;
             } catch (e) {
-                console.warn('Translation API limit', e);
+                console.warn('Translation API limit or error', e);
                 return null;
             }
         }
 
-        document.getElementById('langSelect').addEventListener('change', handleTranslate);
-
-        async function handleTranslate() {
+        // 批量翻译可视区域的标题
+        async function handleGlobalTranslate() {
             const lang = document.getElementById('langSelect').value;
             const cards = document.querySelectorAll('.card');
 

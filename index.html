@@ -3,410 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Journal Special Issues Tracker</title>
+    <title>Scholar Issue Hunter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-sub: #6b7280;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            padding-bottom: 40px;
         }
+
+        /* 顶部 Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 { font-size: 2.5rem; margin-bottom: 10px; font-weight: 800; letter-spacing: -0.025em; }
+        .subtitle { opacity: 0.9; font-size: 1.1rem; }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: -30px auto 0;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 控制栏 */
+        .controls {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .settings {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        select {
+            padding: 10px 35px 10px 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 0.95rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+        }
+
+        /* 期刊区块 */
+        .journal-section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .journal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .journal-header h2 {
+            color: var(--text-main);
+            font-size: 1.8rem;
+            margin-right: 15px;
+        }
+
+        .badge {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* 卡片网格 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid #f3f4f6;
+            display: flex;
+            flex-direction: column;
+            position: relative;
             overflow: hidden;
         }
 
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border-color: #e5e7eb;
         }
 
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before { opacity: 1; }
+
+        .card-title {
+            font-size: 1.15rem;
             font-weight: 700;
+            margin-bottom: 8px;
+            color: #111827;
+            line-height: 1.4;
         }
 
-        .subtitle {
-            font-size: 1.1em;
-            opacity: 0.9;
+        .card-trans {
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-style: italic;
+            display: none; /* 默认隐藏，翻译后显示 */
         }
 
-        .controls {
-            padding: 20px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
+        .card-footer {
+            margin-top: auto;
+            padding-top: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            font-size: 0.9rem;
+            color: var(--text-sub);
         }
 
-        .language-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .language-selector label {
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .language-selector select {
-            padding: 8px 15px;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            background: white;
-            transition: all 0.3s;
-        }
-
-        .language-selector select:hover {
-            border-color: #764ba2;
-        }
-
-        .last-update {
-            color: #6c757d;
-            font-size: 0.9em;
-        }
-
-        .journals {
-            padding: 30px;
-        }
-
-        .journal-section {
-            margin-bottom: 40px;
-        }
-
-        .journal-title {
-            font-size: 1.8em;
-            color: #667eea;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
-            font-weight: 600;
-        }
-
-        .special-issues {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-
-        .issue-card {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .issue-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
-            border-color: #667eea;
-        }
-
-        .issue-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #212529;
-            margin-bottom: 10px;
-        }
-
-        .issue-title-en {
-            color: #495057;
-        }
-
-        .issue-title-trans {
-            color: #667eea;
-            font-size: 0.95em;
-            margin-top: 5px;
-            font-style: italic;
-        }
-
-        .issue-deadline {
-            display: inline-block;
-            background: #ffc107;
-            color: #000;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin: 10px 0;
-        }
-
-        .issue-editors {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin: 10px 0;
-        }
-
-        .issue-description {
-            color: #495057;
-            font-size: 0.95em;
-            line-height: 1.5;
-            margin-top: 10px;
-        }
-
-        .issue-link {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 8px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .btn-link {
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
+            color: white;
+            background: var(--primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s;
         }
 
-        .issue-link:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
+        .btn-link:hover { background: var(--primary-dark); }
 
-        .loading {
+        .loading, .error {
             text-align: center;
             padding: 60px;
-            font-size: 1.2em;
-            color: #6c757d;
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-            font-style: italic;
+            color: var(--text-sub);
+            font-size: 1.2rem;
         }
 
         footer {
             text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            color: #6c757d;
-            font-size: 0.9em;
+            margin-top: 60px;
+            color: #9ca3af;
+            font-size: 0.9rem;
         }
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-            .special-issues {
-                grid-template-columns: 1fr;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        /* 响应式 */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.8rem; }
+            .controls { flex-direction: column; align-items: stretch; }
+            .search-box { width: 100%; }
+            .settings { justify-content: space-between; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📚 Academic Journal Special Issues</h1>
-            <p class="subtitle">Tracking open special issues for academic journals</p>
-        </header>
 
+    <header>
+        <h1>🔬 Scholar Issue Hunter</h1>
+        <p class="subtitle">Tracking Open Special Issues in Real-time</p>
+    </header>
+
+    <div class="container">
         <div class="controls">
-            <div class="language-selector">
-                <label for="secondLang">Second Language:</label>
-                <select id="secondLang">
-                    <option value="zh-CN">中文 (Chinese)</option>
-                    <option value="es">Español (Spanish)</option>
-                    <option value="fr">Français (French)</option>
-                    <option value="de">Deutsch (German)</option>
-                    <option value="ja">日本語 (Japanese)</option>
-                    <option value="ko">한국어 (Korean)</option>
-                    <option value="ar">العربية (Arabic)</option>
-                    <option value="pt">Português (Portuguese)</option>
-                    <option value="ru">Русский (Russian)</option>
-                </select>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search keywords (e.g., 'Urban', 'AI')...">
             </div>
-            <div class="last-update" id="lastUpdate">Last updated: Loading...</div>
+            <div class="settings">
+                <select id="langSelect">
+                    <option value="none">Original (English)</option>
+                    <option value="zh-CN" selected>Translate to Chinese</option>
+                    <option value="ja">Translate to Japanese</option>
+                    <option value="ko">Translate to Korean</option>
+                    <option value="es">Translate to Spanish</option>
+                    <option value="de">Translate to German</option>
+                </select>
+                <div style="font-size: 0.9rem; color: #6b7280;" id="updateTime">Updating...</div>
+            </div>
         </div>
 
-        <div class="journals" id="journalsContainer">
-            <div class="loading">Loading special issues...</div>
+        <div id="app">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Fetching latest data...</div>
         </div>
 
         <footer>
-            <p>Data automatically updated via GitHub Actions | Built with ❤️ for researchers</p>
+            <p>Automated by GitHub Actions | <a href="https://github.com/YourUsername/Scholar-Issue-Hunter" target="_blank" style="color: inherit;">View on GitHub</a></p>
         </footer>
     </div>
 
     <script>
-        let currentLang = 'zh-CN';
-        let journalsData = null;
+        let rawData = null; // 保存原始数据用于搜索过滤
 
-        // Load data from JSON file
-        async function loadData() {
+        // 1. 加载数据
+        async function init() {
             try {
-                const response = await fetch('data/special_issues.json');
-                journalsData = await response.json();
-                document.getElementById('lastUpdate').textContent = `Last updated: ${journalsData.last_updated}`;
-                renderJournals();
-            } catch (error) {
-                console.error('Error loading data:', error);
-                document.getElementById('journalsContainer').innerHTML = 
-                    '<div class="no-data">Unable to load data. Please check back later.</div>';
+                // ⚠️ 注意：这里改成我们实际生成的文件名 issues.json
+                const res = await fetch('data/issues.json'); 
+                if (!res.ok) throw new Error("File not found");
+                
+                rawData = await res.json();
+                
+                // 更新时间
+                document.getElementById('updateTime').innerText = `Last Updated: ${rawData.last_updated}`;
+                
+                // 初始渲染
+                render(rawData.journals);
+                
+                // 初始触发一次翻译（如果默认选了中文）
+                handleTranslate();
+
+            } catch (e) {
+                document.getElementById('app').innerHTML = `
+                    <div class="error">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        Wait for the first GitHub Action run to complete.<br>
+                        (Data file not found yet)
+                    </div>`;
+                console.error(e);
             }
         }
 
-        // Translate text using Google Translate API (free tier)
-        async function translateText(text, targetLang) {
-            if (!text || targetLang === 'en') return text;
-            
-            try {
-                // Using a free translation API - replace with your preferred service
-                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
-                const response = await fetch(url);
-                const data = await response.json();
-                return data[0][0][0];
-            } catch (error) {
-                console.error('Translation error:', error);
-                return text; // Return original text if translation fails
-            }
-        }
-
-        // Render journals and issues
-        async function renderJournals() {
-            if (!journalsData) return;
-
-            const container = document.getElementById('journalsContainer');
+        // 2. 渲染函数
+        function render(journals) {
+            const container = document.getElementById('app');
             container.innerHTML = '';
 
-            for (const journal of journalsData.journals) {
+            if (journals.length === 0) {
+                container.innerHTML = '<div class="error">No matching results found.</div>';
+                return;
+            }
+
+            journals.forEach(journal => {
+                if (!journal.special_issues || journal.special_issues.length === 0) return;
+
                 const section = document.createElement('div');
                 section.className = 'journal-section';
-
-                const title = document.createElement('h2');
-                title.className = 'journal-title';
-                title.textContent = journal.name;
-                section.appendChild(title);
-
-                const issuesContainer = document.createElement('div');
-                issuesContainer.className = 'special-issues';
-
-                if (journal.special_issues.length === 0) {
-                    const noIssues = document.createElement('div');
-                    noIssues.className = 'no-data';
-                    noIssues.textContent = 'No open special issues at the moment';
-                    section.appendChild(noIssues);
-                } else {
-                    for (const issue of journal.special_issues) {
-                        const card = await createIssueCard(issue);
-                        issuesContainer.appendChild(card);
-                    }
-                    section.appendChild(issuesContainer);
-                }
-
+                
+                section.innerHTML = `
+                    <div class="journal-header">
+                        <h2>${journal.name}</h2>
+                        <span class="badge">${journal.special_issues.length} Issues</span>
+                    </div>
+                    <div class="grid">
+                        ${journal.special_issues.map(issue => `
+                            <div class="card" data-title="${issue.title}">
+                                <div class="card-title">${issue.title}</div>
+                                <div class="card-trans"></div> <div class="card-footer">
+                                    <span><i class="far fa-clock"></i> ${issue.deadline || 'Check Link'}</span>
+                                    <a href="${issue.url}" target="_blank" class="btn-link">View <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
                 container.appendChild(section);
-            }
+            });
         }
 
-        // Create issue card
-        async function createIssueCard(issue) {
-            const card = document.createElement('div');
-            card.className = 'issue-card';
+        // 3. 搜索过滤
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            if (!rawData) return;
 
-            // Title in English
-            const titleEn = document.createElement('div');
-            titleEn.className = 'issue-title issue-title-en';
-            titleEn.textContent = issue.title;
-            card.appendChild(titleEn);
+            // 深度过滤：保留包含关键词 Issue 的期刊
+            const filteredJournals = rawData.journals.map(journal => {
+                const matchingIssues = journal.special_issues.filter(issue => 
+                    issue.title.toLowerCase().includes(keyword)
+                );
+                return { ...journal, special_issues: matchingIssues };
+            }).filter(j => j.special_issues.length > 0);
 
-            // Translated title
-            if (currentLang !== 'en') {
-                const titleTrans = document.createElement('div');
-                titleTrans.className = 'issue-title-trans';
-                titleTrans.textContent = issue.title_translated || 'Translating...';
-                card.appendChild(titleTrans);
-
-                // Translate if not already cached
-                if (!issue.title_translated) {
-                    translateText(issue.title, currentLang).then(translated => {
-                        titleTrans.textContent = translated;
-                        issue.title_translated = translated;
-                    });
-                }
-            }
-
-            // Deadline
-            if (issue.deadline) {
-                const deadline = document.createElement('div');
-                deadline.className = 'issue-deadline';
-                deadline.textContent = `📅 Deadline: ${issue.deadline}`;
-                card.appendChild(deadline);
-            }
-
-            // Guest editors
-            if (issue.guest_editors) {
-                const editors = document.createElement('div');
-                editors.className = 'issue-editors';
-                editors.textContent = `👥 Guest Editors: ${issue.guest_editors}`;
-                card.appendChild(editors);
-            }
-
-            // Description
-            if (issue.description) {
-                const desc = document.createElement('div');
-                desc.className = 'issue-description';
-                desc.textContent = issue.description.substring(0, 200) + '...';
-                card.appendChild(desc);
-            }
-
-            // Link
-            if (issue.url) {
-                const link = document.createElement('a');
-                link.className = 'issue-link';
-                link.href = issue.url;
-                link.target = '_blank';
-                link.textContent = 'View Details →';
-                card.appendChild(link);
-            }
-
-            return card;
-        }
-
-        // Language change handler
-        document.getElementById('secondLang').addEventListener('change', async (e) => {
-            currentLang = e.target.value;
-            // Clear cached translations
-            if (journalsData) {
-                journalsData.journals.forEach(journal => {
-                    journal.special_issues.forEach(issue => {
-                        delete issue.title_translated;
-                    });
-                });
-            }
-            await renderJournals();
+            render(filteredJournals);
+            handleTranslate(); // 搜索后重新触发当前视图的翻译
         });
 
-        // Initialize
-        loadData();
+        // 4. 翻译逻辑 (Google Free API)
+        // 注意：GitHub Pages 环境下，Google API 有概率因 CORS 失败，这是正常的。
+        // 如果失败，我们就在控制台报错，但不影响页面显示。
+        const cache = {}; // 简单的内存缓存
+
+        async function translateText(text, targetLang) {
+            const key = `${text}_${targetLang}`;
+            if (cache[key]) return cache[key];
+
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const result = data[0][0][0];
+            
+            cache[key] = result;
+            return result;
+        }
+
+        document.getElementById('langSelect').addEventListener('change', handleTranslate);
+
+        async function handleTranslate() {
+            const lang = document.getElementById('langSelect').value;
+            const cards = document.querySelectorAll('.card');
+
+            // 如果选了 None，隐藏翻译行
+            if (lang === 'none') {
+                cards.forEach(card => card.querySelector('.card-trans').style.display = 'none');
+                return;
+            }
+
+            // 遍历所有卡片进行翻译
+            for (const card of cards) {
+                const title = card.getAttribute('data-title');
+                const transEl = card.querySelector('.card-trans');
+                
+                // 视觉上先显示“正在翻译...”
+                transEl.style.display = 'block';
+                if (!transEl.innerText) transEl.innerText = '...';
+
+                try {
+                    // 并发控制：实际项目中可能需要限制并发数，这里简单处理
+                    // 使用 then 避免阻塞 UI 线程
+                    translateText(title, lang).then(trans => {
+                        transEl.innerText = trans;
+                    });
+                } catch (err) {
+                    console.warn('Translation failed (CORS or Rate Limit):', err);
+                    transEl.style.display = 'none'; // 失败就隐藏
+                }
+            }
+        }
+
+        // 启动
+        init();
     </script>
 </body>
 </html>

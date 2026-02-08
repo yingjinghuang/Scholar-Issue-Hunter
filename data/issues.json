@@ -1,0 +1,83 @@
+{
+  "last_updated": "2026-02-08 09:56:14",
+  "journals": [
+    {
+      "name": "Remote Sensing of Environment",
+      "url": "https://www.sciencedirect.com/journal/remote-sensing-of-environment/about/call-for-papers",
+      "special_issues": [
+        {
+          "title": "Geospatial Foundation Models for Advancing Remote Sensing of Environment",
+          "url": "https://www.sciencedirect.com/special-issue/330054/geospatial-foundation-models-for-advancing-remote-sensing-of-environment",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Development, Validation, and Application of Medium- and High-Resolution Satellite Products at Regional to Global Scales",
+          "url": "https://www.sciencedirect.com/special-issue/321741/development-validation-and-application-of-medium-and-high-resolution-satellite-products-at-regional-to-global-scales",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Remote sensing for assessing water-carbon coupling of terrestrial ecosystems",
+          "url": "https://www.sciencedirect.com/special-issue/319332/remote-sensing-for-assessing-water-carbon-coupling-of-terrestrial-ecosystems",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Geostationary Ocean Color Remote Sensing Data for Improved Understanding of Surface Ocean Biogeochemistry",
+          "url": "https://www.sciencedirect.com/special-issue/318780/geostationary-ocean-color-remote-sensing-data-for-improved-understanding-of-surface-ocean-biogeochemistry",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        }
+      ]
+    },
+    {
+      "name": "Cities",
+      "url": "https://www.sciencedirect.com/journal/cities/about/call-for-papers",
+      "special_issues": [
+        {
+          "title": "Pathways towards all-age friendly city regions",
+          "url": "https://www.sciencedirect.com/special-issue/330210/pathways-towards-all-age-friendly-city-regions",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Evolution of urban spatial structure",
+          "url": "https://www.sciencedirect.com/special-issue/329832/evolution-of-urban-spatial-structure",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Quantum Computing and the City",
+          "url": "https://www.sciencedirect.com/special-issue/328646/quantum-computing-and-the-city",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "The Politics of Spatial Inclusion in Cities",
+          "url": "https://www.sciencedirect.com/special-issue/326521/the-politics-of-spatial-inclusion-in-cities",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Urban regeneration and mobility: Evolution and policy",
+          "url": "https://www.sciencedirect.com/special-issue/321147/urban-regeneration-and-mobility-evolution-and-policy",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Spatial Governance of Urban Agglomeration",
+          "url": "https://www.sciencedirect.com/special-issue/318810/spatial-governance-of-urban-agglomeration",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        },
+        {
+          "title": "Smart Cities: Innovative Urban Planning and the Challenge of Sustainability",
+          "url": "https://www.sciencedirect.com/special-issue/280129/smart-cities-innovative-urban-planning-and-the-challenge-of-sustainability",
+          "deadline": "Check Link",
+          "last_updated": "2026-02-08"
+        }
+      ]
+    }
+  ]
+}

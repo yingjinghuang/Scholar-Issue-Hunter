@@ -58,47 +58,58 @@ class PlaywrightJournalScraper:
         return special_issues
 
     async def extract_logic(self, page) -> List[Dict]:
-        """针对 Elsevier 期刊列表页的结构化提取"""
+        """专门针对 ScienceDirect/Elsevier 页面结构的提取逻辑"""
         issues = []
         
-        # 策略 1: 寻找典型的文章卡片结构
-        # Elsevier 列表页通常使用 <h3> 或 <a> 带有特定的 title
-        selectors = [
-            'a[data-testid="article-list-title-link"]', 
-            'div.pod-listing-header a',
-            'h3'
-        ]
+        # 1. 等待列表加载
+        try:
+            await page.wait_for_selector('li.list-item', timeout=10000)
+        except:
+            print("   ⚠ Timeout waiting for 'li.list-item', checking full body...")
+
+        # 2. 定位所有的列表项
+        items = await page.query_selector_all('li.list-item')
         
-        found_elements = []
-        for selector in selectors:
-            elements = await page.query_selector_all(selector)
-            if elements:
-                found_elements = elements
-                break
-
-        for el in found_elements:
+        for item in items:
             try:
-                title = await el.inner_text()
-                href = await el.get_attribute('href')
-                
-                # 过滤无关链接
-                title_lower = title.lower().strip()
-                if len(title_lower) < 15 or any(x in title_lower for x in ['cookies', 'privacy', 'terms', 'guide for authors']):
+                # 提取标题和 URL
+                # 源码对应：<h3><a class="anchor title ..." href="...">
+                title_elem = await item.query_selector('h3 a.title')
+                if not title_elem:
                     continue
+                
+                title = await title_elem.inner_text()
+                url = await title_elem.get_attribute('href')
+                
+                # 提取截止日期
+                # 源码对应：<div class="text-xs ...">Submission deadline: <strong>30 June 2026</strong></div>
+                deadline = "Not specified"
+                deadline_elem = await item.query_selector('div.text-xs')
+                if deadline_elem:
+                    deadline_text = await deadline_elem.inner_text()
+                    # 使用正则提取 Submission deadline 之后的内容
+                    match = re.search(r'deadline:\s*(.*)', deadline_text, re.IGNORECASE)
+                    if match:
+                        deadline = match.group(1).strip()
 
-                # 寻找日期/截止日期 (在父级或后续元素中)
-                parent = await el.query_selector('xpath=..') # 获取父节点
-                parent_text = await parent.inner_text() if parent else ""
-                
-                deadline = self.parse_deadline(parent_text)
-                
+                # 提取客座编辑 (Guest Editors)
+                # 源码对应：<p class="summary ...">Guest editors: Le Wang, ...</p>
+                editors = None
+                editor_elem = await item.query_selector('p.summary')
+                if editor_elem:
+                    editor_text = await editor_elem.inner_text()
+                    editors = editor_text.replace('Guest editors:', '').strip()
+
                 issues.append({
                     'title': title.strip(),
-                    'url': href if href.startswith('http') else 'https://www.journals.elsevier.com' + href,
+                    'url': url if url.startswith('http') else 'https://www.sciencedirect.com' + url,
                     'deadline': deadline,
+                    'guest_editors': editors,
                     'last_seen': datetime.now().strftime('%Y-%m-%d')
                 })
-            except:
+                
+            except Exception as e:
+                print(f"   ⚠ Error parsing an item: {str(e)[:50]}")
                 continue
                 
         return self.deduplicate(issues)

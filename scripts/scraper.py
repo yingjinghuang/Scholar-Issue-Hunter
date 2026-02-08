@@ -12,7 +12,7 @@ API_KEY = os.environ.get('SCRAPER_API_KEY')
 
 def load_journals():
     try:
-        with open('journals.json', 'r', encoding='utf-8') as f:
+        with open('data/journals.json', 'r', encoding='utf-8') as f:
             return json.load(f)
     except FileNotFoundError:
         print("❌ Error: journals.json not found.")

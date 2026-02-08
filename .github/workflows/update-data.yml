@@ -2,7 +2,11 @@ name: Auto-Scrape via API
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天运行
+    # 👇 修改重点：每周日运行一次 (节省 API)
+    # 分 时 日 月 周 (0=周日)
+    - cron: '0 0 * * 0' 
+  
+  # 保留手动触发按钮，万一你想临时跑一次
   workflow_dispatch:
 
 jobs:
@@ -26,7 +30,7 @@ jobs:
 
       - name: Run Scraper
         env: 
-          # 👇 关键：把 Secret 注入到环境变量
+          # 确保你在仓库 Settings -> Secrets 里配置了 SCRAPER_API_KEY
           SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
         run: |
           python scripts/scraper.py
@@ -35,10 +39,14 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          # 尝试添加文件
           git add data/issues.json
+          
+          # 检查是否有变动，有变动才提交，避免报错
           if git diff --staged --quiet; then
             echo "✨ No changes to commit"
           else
-            git commit -m "update: special issues data via API"
+            git commit -m "update: weekly special issues data"
             git push
           fi

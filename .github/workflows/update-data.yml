@@ -2,10 +2,10 @@ name: Update Special Issues Data
 
 on:
   schedule:
-    # Run every day at 8:00 AM UTC (4:00 PM Beijing Time)
+    # 每天 UTC 8:00 (北京时间 16:00) 运行
     - cron: '0 8 * * *'
   
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:  # 允许手动触发
   
   push:
     branches:
@@ -13,8 +13,6 @@ on:
     paths:
       - 'scraper.py'
       - 'requirements.txt'
-      - 'manual_issues.yaml'
-      - 'update_manual.py'
 
 jobs:
   update-data:
@@ -36,42 +34,49 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          # 确保 requirements.txt 里有 playwright-stealth
           pip install -r requirements.txt
       
-      - name: Install Playwright browsers
+      - name: Install Playwright Browsers
+        # 使用 playwright 官方命令安装浏览器及其系统依赖
         run: |
-          playwright install --with-deps chromium
+          npx playwright install chromium --with-deps
       
       - name: Run Playwright scraper
         run: |
-          echo "Starting scraper..."
-          python scraper.py || echo "Scraper encountered errors but continuing..."
+          echo "🚀 Starting scraper..."
+          # 使用 stdbuf 确保日志实时输出，方便调试
+          python scraper.py || echo "⚠️ Scraper encountered errors but continuing..."
           
       - name: Check scraper results
         run: |
-          echo "Checking scraper results..."
+          echo "🔍 Checking scraper results..."
           if [ -f "data/special_issues.json" ]; then
-            echo "✓ JSON file created"
-            cat data/special_issues.json | python -m json.tool > /dev/null && echo "✓ JSON is valid" || echo "✗ JSON is invalid"
+            echo "✅ JSON file created"
+            # 简单验证 JSON 格式
+            cat data/special_issues.json | python -m json.tool > /dev/null && echo "✅ JSON is valid" || echo "❌ JSON is invalid"
             
+            # 统计抓取到的数量
             ISSUE_COUNT=$(python -c "import json; data=json.load(open('data/special_issues.json')); print(sum(len(j.get('special_issues', [])) for j in data.get('journals', [])))" 2>/dev/null || echo "0")
-            echo "Found $ISSUE_COUNT total special issues"
+            echo "📊 Found $ISSUE_COUNT total special issues"
             
             if [ "$ISSUE_COUNT" -eq "0" ]; then
-              echo "⚠️ Warning: No special issues found"
-              echo "This might be due to:"
-              echo "  1. Website structure changed"
-              echo "  2. No open special issues currently"
-              echo "  3. Scraper needs adjustment"
+              echo "⚠️ Warning: No special issues found. Please check logs for 'Access Denied' or 'Bot Detection'."
             fi
           else
-            echo "✗ JSON file not created"
+            echo "❌ Error: data/special_issues.json not found!"
             exit 1
           fi
       
       - name: Commit and push if changed
         run: |
-          git config --global user.name 'GitHub Action'
-          git config --global user.email 'action@github.com'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add data/special_issues.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update special issues data [skip ci]" && git push)
+          # 只有在文件有变动时才提交，避免报错
+          if git diff --staged --quiet; then
+            echo "✨ No changes to commit"
+          else
+            git commit -m "chore: update special issues data [skip ci]"
+            git push
+          fi

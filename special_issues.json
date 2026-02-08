@@ -1,0 +1,52 @@
+{
+  "last_updated": "2026-02-08 12:00:00",
+  "journals": [
+    {
+      "name": "Remote Sensing of Environment",
+      "url": "https://www.sciencedirect.com/journal/remote-sensing-of-environment/about/call-for-papers",
+      "special_issues": [
+        {
+          "title": "Remote Sensing of Ecohydrology",
+          "deadline": "31 March 2026",
+          "guest_editors": "Hongliang Ma, Benjamin Dechant, Jiangyuan Zeng, Aleixandre Verger, William K. Smith, Youngryel Ryu",
+          "description": "This special issue aims to highlight pioneering advancements in remote sensing of ecohydrology, fostering the exchange of leading-edge research and ideas on water-carbon coupling in terrestrial ecosystems.",
+          "url": "https://www.sciencedirect.com/journal/remote-sensing-of-environment/about/call-for-papers"
+        },
+        {
+          "title": "Advances in Geostationary Ocean Color Remote Sensing",
+          "deadline": "30 April 2026",
+          "guest_editors": "KIOST Research Team",
+          "description": "Special issue on GOCI-II compiling research results and studies for developing next-generation ocean color remote sensing capabilities.",
+          "url": "https://www.sciencedirect.com/journal/remote-sensing-of-environment/about/call-for-papers"
+        },
+        {
+          "title": "Large Area Monitoring with Landsat",
+          "deadline": "15 May 2026",
+          "guest_editors": "Various",
+          "description": "Focusing on generating essential large area datasets such as land cover, forest dynamics, phenology and evapotranspiration for addressing climate and land use challenges.",
+          "url": "https://www.sciencedirect.com/journal/remote-sensing-of-environment/about/call-for-papers"
+        }
+      ]
+    },
+    {
+      "name": "Cities",
+      "url": "https://www.sciencedirect.com/journal/cities/about/call-for-papers",
+      "special_issues": [
+        {
+          "title": "The Politics of Spatial Inclusion in Cities",
+          "deadline": "28 February 2026",
+          "guest_editors": "Rashid Mushkani, Robert J. Chaskin, Shin Koseki",
+          "description": "This special issue examines the politics of spatial inclusion, exploring how land use, design, location, visibility, mobility, and enforcement distribute opportunities in urban spaces.",
+          "url": "https://www.journals.elsevier.com/cities/call-for-papers"
+        },
+        {
+          "title": "Territorial Innovation for Cities and Regions",
+          "deadline": "31 March 2026",
+          "guest_editors": "Various",
+          "description": "Exploring innovative approaches to territorial development and urban-regional planning.",
+          "url": "https://www.journals.elsevier.com/cities/call-for-papers"
+        }
+      ]
+    }
+  ]
+}
